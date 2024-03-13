@@ -1,5 +1,5 @@
 import { createApp, h } from 'vue'
-import { createInertiaApp } from '@inertiajs/vue3',
+import { createInertiaApp } from '@inertiajs/vue3'
 import { Quasar} from 'quasar'
 
 // Import icon libraries
