@@ -18,4 +18,4 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
-Route::resource('personagens', PersonagemController::class);
+Route::resource('personagem', PersonagemController::class);

@@ -8,7 +8,7 @@
       >
         <q-input
             filled
-            v-model="nome"
+            v-model="form.nome"
             label="Identidade Secreta"
             hint="Nome e Sobrenome"
             lazy-rules
@@ -17,14 +17,14 @@
 
         <q-input
             filled  
-            v-model="alcunha"
+            v-model="form.alcunha"
             label="Alcunha"
             hint="Nome Inventado"
             lazy-rules
             :rules="[ val => val && val.length > 0 || 'Informe pelo menos uma alcunha']"
         />
 
-        <q-file clearable color="blue" filled v-model="foto" label="Foto" counter accept="image/*">
+        <q-file clearable color="blue" filled v-model="form.foto" label="Foto" counter accept="image/*">
             <template v-slot:hint>
                 Adicione uma Imagem
             </template>
@@ -32,58 +32,64 @@
 
         <q-select 
             filled 
-            v-model="vinculo" 
+            v-model="form.vinculo" 
             :options="options" 
             label="Filiação" 
             hint="Escolha uma Filiação"	
             :rules="[ val => val && val.length > 0 || 'Selecione uma filiação']"/>   
   
         <div>
-          <q-btn label="Submit" type="submit" color="primary"/>
-          <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+          <q-btn label="Cadastrar" type="submit" color="primary"/>
+          <q-btn label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
         </div>
       </q-form>
   
     </div>
   </template>
   
-  <script>
-    import { useQuasar } from 'quasar'
-    import { ref } from 'vue'
+  <script setup>
+    import {router, useForm} from '@inertiajs/vue3'
+    import {useQuasar} from 'quasar'
+    import {ref} from 'vue'
 
-    export default {
-        setup () {
-            const $q = useQuasar()
+    const $q = useQuasar()
+    
+    const options = ['Héroi', 'Vilão', 'Anti-Héroi', 'Ajudante', 'Civil', 'Outro']
+     
+    const form = useForm({
+        nome: ref(null),
+        alcunha: ref(null),
+        foto: ref(null),
+        vinculo: ref(null),
+    })
 
-            const nome = ref(null)
-            const alcunha = ref(null)
-            const foto = ref(null)
-            const vinculo = ref(null)
-            const options = ['Héroi', 'Vilão', 'Anti-Héroi', 'Ajudante', 'Civil', 'Outro']
-            
-            return {
-                nome,
-                alcunha,
-                foto,
-                vinculo,
-                options,
-
-                onSubmit () {
-                    $q.notify({
-                        color: 'green-4',
-                        textColor: 'white',
-                        icon: 'cloud_done',
-                        message: 'Submitted'
-                    })
-                },
-
-                onReset () {
-                    nome.value = null
-                    alcunha.value = null
-                    foto.value = null
-                    vinculo.value = null
-                },
+    const props=defineProps({
+        errors: Object
+    })
+    
+    function onSubmit() {
+        router.post('/personagem', form,{
+            onSuccess: () => {
+                $q.notify({
+                    color: 'green-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Personagem Cadastrado com Sucesso'
+                })
+            },
+            onError: () => {
+                $q.notify({
+                    color: 'red-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Erro ao Cadastrar Personagem'
+                })
             }
-        }
+        })
     }
+
+    function onReset() {
+        form.reset()
+    }
+
 </script>
