@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\PersonagemController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,5 +15,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia('Home');
+    return Inertia::render('Home');
 });
+
+Route::resource('personagens', PersonagemController::class);
