@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); 
             $table->string('nome', 255); 
             $table->string('alcunha', 255); 
-            $table->binary('foto')->nullable(); 
+            $table->longText('foto')->nullable(); 
             $table->string('vinculo', 255); 
             $table->boolean('ativo')->default(true); 
             $table->timestamps();

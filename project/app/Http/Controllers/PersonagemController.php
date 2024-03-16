@@ -13,7 +13,9 @@ class PersonagemController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Personagens');
+        return Inertia::render('Personagens', [
+            'personagens' => Personagem::orderBy('nome', 'asc')->get()
+        ]);
     }
 
     /**
@@ -32,8 +34,17 @@ class PersonagemController extends Controller
         $validate=$request->validate([
             'nome'=>'required',
             'alcunha'=>'required',
-            'vinculo'=>'required'
+            'vinculo'=>'required',
+            'foto'=>'file|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
+
+        //tratamento da imagem, conversão para base64
+        if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+            $conteudo = file_get_contents($request->file('foto')->path());
+            $validate['foto'] = base64_encode($conteudo);
+        } else {
+            return response()->json(['error' => 'Erro no envio da foto'], 400);
+        }
 
         Personagem::create($validate);
     }
