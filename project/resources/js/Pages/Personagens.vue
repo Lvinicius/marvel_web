@@ -15,6 +15,7 @@
             :rules="[ val => val && val.length > 0 || 'Informe pelo menos um nome']"
             :error="props.errors.nome"
             :error-message="props.errors.nome"
+            ref="nome"
         />
 
         <q-input
@@ -27,6 +28,8 @@
             :error="props.errors.alcunha"
             :error-message="props.errors.alcunha"
         />
+
+        <img :src="form.foto" alt="Imagem" style="max-width: 200px; max-height: 200px;">
 
         <q-file 
             clearable 
@@ -81,20 +84,22 @@
             </template>
 
             <template v-slot:body="props">
-                <q-tr :props="props">
-                    <q-td style="width: 20%;" class="text-center">
-                        <q-avatar>
-                        <img :src="'data:image/png;base64,' + props.row.foto">
-                        </q-avatar>
-                    </q-td>
-                    <q-td style="width: 20%;" class="text-center">{{ props.row.nome }}</q-td>
-                    <q-td style="width: 20%;" class="text-center">{{ props.row.alcunha }}</q-td>
-                    <q-td style="width: 30%;" class="text-center">{{ props.row.vinculo }}</q-td>
-                    <q-td style="width: 10%;" class="text-center">
-                        <q-icon size="25px" name="edit" @click="editar(props.row.id)" color="primary" class="cursor-pointer"/>
-                        <q-icon size="25px" name="delete" @click="deletar(props.row.id)" color="red" class="cursor-pointer"/> 
-                    </q-td>
-                </q-tr>
+                <template v-if="props.row.ativo === 1">
+                    <q-tr :props="props">
+                        <q-td style="width: 20%;" class="text-center">
+                            <q-avatar>
+                            <img :src="'/storage/' + props.row.foto">
+                            </q-avatar>
+                        </q-td>
+                        <q-td style="width: 20%;" class="text-center">{{ props.row.nome }}</q-td>
+                        <q-td style="width: 20%;" class="text-center">{{ props.row.alcunha }}</q-td>
+                        <q-td style="width: 30%;" class="text-center">{{ props.row.vinculo }}</q-td>
+                        <q-td style="width: 10%;" class="text-center">
+                            <q-icon size="25px" name="edit" @click="onEdit(props.row)" color="primary" class="cursor-pointer"/>
+                            <q-icon size="25px" name="delete" @click="onDelete(props.row.id)" color="red" class="cursor-pointer"/> 
+                        </q-td>
+                    </q-tr>
+                </template>
             </template>
         </q-table>
     </div>
@@ -129,7 +134,8 @@
                     textColor: 'white',
                     icon: 'cloud_done',
                     message: 'Personagem Cadastrado com Sucesso'
-                });
+                });                
+                onReset();
             },
             onError: () => {
                 $q.notify({
@@ -146,4 +152,31 @@
         form.reset()
     }
 
+    function onDelete(id){
+        router.delete('/personagem/'+ id, {
+            onSuccess: () => {
+                $q.notify({
+                    color: 'green-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Personagem Deletado com Sucesso'
+                });
+            },
+            onError: () => {
+                $q.notify({
+                    color: 'red-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Erro ao Deletar Personagem'
+                })
+            }
+        })
+    }
+
+    function onEdit(row){
+        form.nome = row.nome;
+        form.alcunha = row.alcunha;
+        form.foto = "/storage/" + row.foto;
+        form.vinculo = row.vinculo;         
+    }
 </script>

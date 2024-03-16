@@ -38,15 +38,15 @@ class PersonagemController extends Controller
             'foto'=>'file|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
-        //tratamento da imagem, conversão para base64
+        // Salva a imagem na pasta 'uploads' e obtém o caminho relativo
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-            $conteudo = file_get_contents($request->file('foto')->path());
-            $validate['foto'] = base64_encode($conteudo);
+            $path = $request->file('foto')->store('uploads', 'public');
+            $validate['foto'] = $path;
         } else {
             return response()->json(['error' => 'Erro no envio da foto'], 400);
         }
 
-        Personagem::create($validate);
+        //Personagem::create($validate);
     }
 
     /**
@@ -78,6 +78,6 @@ class PersonagemController extends Controller
      */
     public function destroy(Personagem $personagem)
     {
-        //
+        $personagem->update(['ativo' => 0]);
     }
 }
