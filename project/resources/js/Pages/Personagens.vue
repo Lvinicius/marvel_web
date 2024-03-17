@@ -30,35 +30,42 @@
             :error-message="props.errors.alcunha"
         />
 
-        <q-file 
-            clearable 
-            color="blue" 
-            outlined 
-            v-model="form.foto" 
-            label="Foto" 
-            counter            
-            accept="image/*"
-            :error="props.errors.foto"
-            :error-message="props.errors.foto"
-            >
-            <template v-slot:hint>
-                Adicione uma Imagem
-            </template>
-        </q-file>
+        <div style="margin-bottom: 5%;">
+            <div class="q-col row items-start">
+                <div class="q-col col-auto" style="margin-right: 5%; width: 35%">
+                    <q-file 
+                        clearable 
+                        color="blue" 
+                        outlined 
+                        v-model="form.foto" 
+                        label="Foto" 
+                        counter            
+                        accept="image/*"
+                        :error="props.errors.foto"
+                        :error-message="props.errors.foto"
+                        >
+                        <template v-slot:hint>
+                            Adicione uma Imagem
+                        </template>
+                    </q-file>
+                </div>
+                <div class="q-col col-auto" style="width: 60%">
+                    <q-select 
+                        outlined 
+                        v-model="form.vinculo" 
+                        :options="options" 
+                        label="Afiliação" 
+                        hint="Escolha uma Afiliação"
+                        lazy-rules	
+                        :rules="[ val => !!val || 'Selecione uma afiliação']"
+                        :error="props.errors.vinculo"
+                        :error-message="props.errors.vinculo"
+                    />  
+                </div>   
+            </div> 
+        </div>
 
-        <q-select 
-            outlined 
-            v-model="form.vinculo" 
-            :options="options" 
-            label="Afiliação" 
-            hint="Escolha uma Afiliação"
-            lazy-rules	
-            :rules="[ val => !!val || 'Selecione uma afiliação']"
-            :error="props.errors.vinculo"
-            :error-message="props.errors.vinculo"
-        />
-
-        <div>
+        <div style="margin-top: 3%;">
             <!-- Cadastrar | Atualizar -->
             <q-btn v-if="!isEditing" label="Cadastrar" type="submit" color="primary"/>
             <q-btn v-else label="Atualizar" @click="onUpdate(form.id)" color="primary"/>
@@ -66,7 +73,7 @@
             <q-btn v-if="!isEditing" label="Limpar" type="reset" color="primary" flat class="q-ml-sm"/>
             <q-btn v-else label="Cancelar" @click="onCancel" color="primary" flat class="q-ml-sm"/>
         </div>
-        
+          
       </q-form>      
     </div>
 
@@ -94,11 +101,10 @@
             </template>
 
             <template v-slot:body="props">
-                <template v-if="props.row.ativo === 1">
                     <q-tr :props="props">
                         <q-td style="width: 20%;" class="text-center">
                             <q-avatar>
-                            <img :src="'/storage/' + props.row.foto">
+                                <img :src="'/storage/' + props.row.foto">
                             </q-avatar>
                         </q-td>
                         <q-td style="width: 20%;" class="text-center">{{ props.row.nome }}</q-td>
@@ -109,7 +115,6 @@
                             <q-icon size="25px" name="delete" @click="onDelete(props.row.id)" color="red" class="cursor-pointer"/> 
                         </q-td>
                     </q-tr>
-                </template>
             </template>
         </q-table>
     </div>

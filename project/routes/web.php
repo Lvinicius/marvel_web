@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\PersonagemController;
+use App\Http\Controllers\QuadrinhoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,3 +21,5 @@ Route::get('/', function () {
 
 Route::resource('personagem', PersonagemController::class);
 Route::post('/personagem/{id}', [PersonagemController::class, 'update']);
+Route::resource('quadrinho', QuadrinhoController::class);
+Route::post('/quadrinho/{id}', [QuadrinhoController::class, 'update']);
