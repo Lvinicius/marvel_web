@@ -4,6 +4,7 @@
       <q-form
         @submit="onSubmit"
         @reset="onReset"
+        @edit="onEdit"
         class="q-gutter-md"
       >
         <q-input
@@ -28,8 +29,6 @@
             :error="props.errors.alcunha"
             :error-message="props.errors.alcunha"
         />
-
-        <img :src="form.foto" alt="Imagem" style="max-width: 200px; max-height: 200px;">
 
         <q-file 
             clearable 
@@ -56,11 +55,15 @@
             :rules="[ val => val && val.length > 0 || 'Selecione uma afiliação']"
             :error="props.errors.vinculo"
             :error-message="props.errors.vinculo"
-            />
+        />
 
         <div>
-          <q-btn label="Cadastrar" type="submit" color="primary"/>
-          <q-btn label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
+            <!-- Cadastrar | Atualizar -->
+            <q-btn v-if="!isEditing" label="Cadastrar" type="submit" color="primary"/>
+            <q-btn v-else label="Atualizar" @click="onUpdate(form.id)" color="primary"/>
+            <!-- Limpar | Cancelar -->
+            <q-btn v-if="!isEditing" label="Limpar" type="reset" color="primary" flat class="q-ml-sm"/>
+            <q-btn v-else label="Cancelar" @click="onCancel" color="primary" flat class="q-ml-sm"/>
         </div>
         
       </q-form>      
@@ -111,6 +114,8 @@
     import {ref} from 'vue'
 
     const $q = useQuasar()
+
+    const isEditing = ref(false)
     
     const options = ['Héroi', 'Vilão', 'Anti-Héroi', 'Ajudante', 'Civil', 'Outro']
      
@@ -119,12 +124,12 @@
         alcunha: ref(null),
         foto: ref(null),
         vinculo: ref(null),
-    })
+    }) 
 
     const props=defineProps({
         errors: Object,
         personagens: Object
-    })
+    })    
     
     function onSubmit() {
         router.post('/personagem', form,{
@@ -134,8 +139,7 @@
                     textColor: 'white',
                     icon: 'cloud_done',
                     message: 'Personagem Cadastrado com Sucesso'
-                });                
-                onReset();
+                });         
             },
             onError: () => {
                 $q.notify({
@@ -150,6 +154,11 @@
 
     function onReset() {
         form.reset()
+        // Clear all errors...
+        form.clearErrors()
+
+        // Clear errors for specific fields...
+        form.clearErrors('field', 'anotherfield')
     }
 
     function onDelete(id){
@@ -173,10 +182,81 @@
         })
     }
 
-    function onEdit(row){
+    function onEdit(row){        
+        form.id = row.id;
         form.nome = row.nome;
         form.alcunha = row.alcunha;
-        form.foto = "/storage/" + row.foto;
         form.vinculo = row.vinculo;         
+        
+        const nomeArquivo = row.foto.split('/').pop();
+                
+        loadFile('/storage/' + row.foto)
+        .then((blob) => {
+            form.foto = new File([blob], nomeArquivo);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+
+        enterEditMode();
     }
+
+    function onUpdate(id){
+        router.post('/personagem/'+ id, form, {
+            onSuccess: () => {
+                $q.notify({
+                    color: 'green-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Personagem Atualizado com Sucesso'
+                });
+                onReset();
+                exitEditMode();
+            },
+            onError: () => {
+                $q.notify({
+                    color: 'red-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Erro ao Atualizar Personagem'
+                })
+            }
+        })
+    }
+
+    function onCancel(){
+        onReset()
+        exitEditMode()
+    }
+
+    function loadFile(url) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.responseType = 'blob';
+
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    resolve(xhr.response);
+                } else {
+                    reject(new Error('Falha ao carregar o arquivo'));
+                }
+            };
+
+            xhr.onerror = () => {
+                reject(new Error('Erro de rede ao carregar o arquivo'));
+            };
+
+            xhr.send();
+        });
+    }
+
+    function enterEditMode() {
+        isEditing.value = true;
+    }
+
+    function exitEditMode() {
+        isEditing.value = false;
+    }
+
 </script>

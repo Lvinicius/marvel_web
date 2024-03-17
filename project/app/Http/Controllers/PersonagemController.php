@@ -36,17 +36,18 @@ class PersonagemController extends Controller
             'alcunha'=>'required',
             'vinculo'=>'required',
             'foto'=>'file|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        ]);
+        ]);        
 
         // Salva a imagem na pasta 'uploads' e obtém o caminho relativo
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-            $path = $request->file('foto')->store('uploads', 'public');
+            $nomeArquivo = $request->file('foto')->getClientOriginalName(); 
+            $path = $request->file('foto')->storeAs('uploads', $nomeArquivo, 'public'); 
             $validate['foto'] = $path;
         } else {
             return response()->json(['error' => 'Erro no envio da foto'], 400);
         }
 
-        //Personagem::create($validate);
+        Personagem::create($validate);
     }
 
     /**
@@ -68,9 +69,31 @@ class PersonagemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Personagem $personagem)
-    {
-        //
+    public function update(Request $request, $id)
+    {   
+        // Busca o Personagem pelo ID
+        $personagem = Personagem::findOrFail($id);
+
+        if(!$personagem) {
+            return response()->json(['error' => 'Personagem não encontrado'], 404);
+        }else{
+            $validate = $request->validate([ 
+                'nome' => 'required',
+                'alcunha' => 'required',
+                'vinculo' => 'required',
+                'foto' => 'sometimes|file|mimes:jpeg,png,jpg,gif,svg|max:2048' 
+            ]);
+        
+            // Se uma nova foto foi enviada, salva a nova imagem na pasta 'uploads' e atualiza o caminho relativo
+            if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+                $nomeArquivo = $request->file('foto')->getClientOriginalName(); 
+                $path = $request->file('foto')->storeAs('uploads', $nomeArquivo, 'public'); 
+                $validate['foto'] = $path;
+            }
+            
+            // Atualiza os dados do personagem
+            $personagem->update($validate);
+        }
     }
 
     /**

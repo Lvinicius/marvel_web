@@ -19,3 +19,4 @@ Route::get('/', function () {
 });
 
 Route::resource('personagem', PersonagemController::class);
+Route::post('/personagem/{id}', [PersonagemController::class, 'update']);
