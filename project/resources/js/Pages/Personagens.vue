@@ -51,8 +51,9 @@
             v-model="form.vinculo" 
             :options="options" 
             label="Afiliação" 
-            hint="Escolha uma Afiliação"	
-            :rules="[ val => val && val.length > 0 || 'Selecione uma afiliação']"
+            hint="Escolha uma Afiliação"
+            lazy-rules	
+            :rules="[ val => !!val || 'Selecione uma afiliação']"
             :error="props.errors.vinculo"
             :error-message="props.errors.vinculo"
         />
@@ -73,8 +74,14 @@
         <q-table
             title="Personagens"
             :rows="personagens"
-            row-key="personagens.id"
+            :rows-per-page-options="[3, 5, 10, 20, 30]" 
+            :rows-per-page="rowsPerPage"
+            :page="currentPage"
+            :rows-in-page="totalItems"
+            @request="onPaginationRequest"
+            row-key="id"
             separator="cell"
+            rows-per-page-label="Itens por Página"
         >
             <template v-slot:header>
                 <q-tr>
@@ -129,8 +136,34 @@
     const props=defineProps({
         errors: Object,
         personagens: Object
-    })    
+    })  
     
+    const currentPage = ref(1); 
+    const rowsPerPage = ref(10);
+    const totalItems = ref(0); 
+
+    const onPaginationRequest = (pagination) => {
+        currentPage.value = pagination.page;
+        rowsPerPage.value = pagination.rowsPerPage;
+        loadPage();
+    };
+
+    const loadPage = async () => {
+        try {
+            const response = await axios.get(`/api/personagens?page=${currentPage.value}&per_page=${rowsPerPage.value}`);
+            const filteredData = response.data.data.filter(personagem => personagem.ativo === 1);
+            personagens.value = filteredData;
+            totalItems.value = filteredData.length;
+        } catch (error) {
+            $q.notify({
+                color: 'red-4',
+                textColor: 'white',
+                icon: 'cloud_done',
+                message: 'Erro ao carregar os personagens'
+            });
+        }
+    };
+        
     function onSubmit() {
         router.post('/personagem', form,{
             onSuccess: () => {
@@ -139,7 +172,8 @@
                     textColor: 'white',
                     icon: 'cloud_done',
                     message: 'Personagem Cadastrado com Sucesso'
-                });         
+                }); 
+                onReset();        
             },
             onError: () => {
                 $q.notify({
@@ -154,11 +188,7 @@
 
     function onReset() {
         form.reset()
-        // Clear all errors...
         form.clearErrors()
-
-        // Clear errors for specific fields...
-        form.clearErrors('field', 'anotherfield')
     }
 
     function onDelete(id){

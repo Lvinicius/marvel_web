@@ -13,8 +13,10 @@ class PersonagemController extends Controller
      */
     public function index()
     {
+        $personagens = Personagem::where('ativo', 1)->orderBy('nome', 'asc')->get();
+
         return Inertia::render('Personagens', [
-            'personagens' => Personagem::orderBy('nome', 'asc')->get()
+            'personagens' => $personagens
         ]);
     }
 
