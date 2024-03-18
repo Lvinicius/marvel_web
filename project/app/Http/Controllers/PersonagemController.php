@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Personagem;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class PersonagemController extends Controller
 {
@@ -14,9 +15,11 @@ class PersonagemController extends Controller
     public function index()
     {
         $personagens = Personagem::where('ativo', 1)->orderBy('nome', 'asc')->get();
+        $user = Auth::user();
 
         return Inertia::render('Personagens', [
-            'personagens' => $personagens
+            'personagens' => $personagens,
+            'user' => $user
         ]);
     }
 

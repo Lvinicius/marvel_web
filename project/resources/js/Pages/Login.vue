@@ -51,7 +51,7 @@ const login = async () => {
   try {
     const response = router.post('/login', { email: email.value, password: password.value })
     if (response === undefined) {      
-      alert.value = true
+      // alert.value = true
     } else {
       router.replace('/personagem')
     }

@@ -16,15 +16,14 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-// Route::get('/', function () {
-//     return Inertia::render('Home');
-// });
+Route::middleware(['auth'])->group(function () {
+    Route::resource('personagem', PersonagemController::class);
+    Route::post('/personagem/{id}', [PersonagemController::class, 'update']);
+    Route::resource('quadrinho', QuadrinhoController::class);
+    Route::post('/quadrinho/{id}', [QuadrinhoController::class, 'update']);
+});
 
-Route::resource('personagem', PersonagemController::class);
-Route::post('/personagem/{id}', [PersonagemController::class, 'update']);
-Route::resource('quadrinho', QuadrinhoController::class);
-Route::post('/quadrinho/{id}', [QuadrinhoController::class, 'update']);
-
+Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

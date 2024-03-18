@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Quadrinho;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class QuadrinhoController extends Controller
 {
@@ -14,9 +15,11 @@ class QuadrinhoController extends Controller
     public function index()
     {
         $quadrinhos = Quadrinho::where('ativo', 1)->orderBy('titulo', 'asc')->get();
+        $user = Auth::user();
 
         return Inertia::render('Quadrinhos', [
-            'quadrinhos' => $quadrinhos
+            'quadrinhos' => $quadrinhos,
+            'user' => $user
         ]);
     }
 

@@ -2,9 +2,30 @@
     <q-layout view="hHh lpR lfr">  
     <q-header reveal elevated class="bg-primary text-white bg-grey-10" height-hint="98" align="center">
       <q-toolbar>
-        <q-toolbar-title>
+        <q-toolbar-title class="q-mr-auto" style="position: relative;">
             <q-img src="/storage/Marvel_Logo.svg.png" alt="Marvel Logo" width="180px" height="70px"/>          
         </q-toolbar-title>
+        <div style="display: flex; align-items: right; position: absolute; top: 10%; right: 1%; display: flex; align-items: center;">
+            <div>
+                <span >{{ user.name }}</span>
+            </div>
+            <div style="margin-left: 6px;">
+                <q-btn-dropdown
+                    dense
+                    size="sm"
+                    color="red"
+                    rounded
+                >            
+                    <q-list>
+                    <q-item clickable @click="logout" v-close-popup>
+                        <q-item-section>
+                        <q-item-label>Logout</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                    </q-list>
+                </q-btn-dropdown>
+            </div>
+        </div>
       </q-toolbar>
 
       <q-tabs align="center">
@@ -82,11 +103,11 @@
 
         <div style="margin-top: 3%;" align="right">
             <!-- Cadastrar | Atualizar -->
-            <q-btn v-if="!isEditing" label="Cadastrar" type="submit" color="primary"/>
-            <q-btn v-else label="Atualizar" @click="onUpdate(form.id)" color="primary"/>
+            <q-btn v-if="!isEditing" label="Cadastrar" type="submit" color="red"/>
+            <q-btn v-else label="Atualizar" @click="onUpdate(form.id)" color="red"/>
             <!-- Limpar | Cancelar -->
-            <q-btn v-if="!isEditing" label="Limpar" type="reset" color="primary" flat class="q-ml-sm"/>
-            <q-btn v-else label="Cancelar" @click="onCancel" color="primary" flat class="q-ml-sm"/>
+            <q-btn v-if="!isEditing" label="Limpar" type="reset" color="red" flat class="q-ml-sm"/>
+            <q-btn v-else label="Cancelar" @click="onCancel" color="red" flat class="q-ml-sm"/>
         </div>
           
       </q-form>      
@@ -157,7 +178,8 @@
 
     const props=defineProps({
         errors: Object,
-        personagens: Object
+        personagens: Object,
+        user: Object
     })  
     
     const currentPage = ref(1); 
@@ -185,7 +207,21 @@
             });
         }
     };
-        
+    const logout = async () => {
+        try {
+            const response = await router.post('/logout')
+            if (response.data.success) {
+            // Redirecionar para a página de login ou qualquer outra página apropriada após o logout
+            router.replace('/login')
+            } else {
+            console.error('Erro ao efetuar logout:', response.data.message)
+            }
+        } catch (error) {
+            console.error('Erro ao efetuar logout:', error)
+            // Lógica para lidar com erros de logout
+        }
+    } 
+    
     function onSubmit() {
         router.post('/personagem', form,{
             onSuccess: () => {
