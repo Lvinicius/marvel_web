@@ -1,6 +1,21 @@
 <template>
-    <div class="q-pa-md" style="max-width: 50%">
-  
+    <q-layout view="hHh lpR lfr">  
+    <q-header reveal elevated class="bg-primary text-white bg-grey-10" height-hint="98" align="center">
+      <q-toolbar>
+        <q-toolbar-title>
+            <q-img src="/storage/Marvel_Logo.svg.png" alt="Marvel Logo" width="180px" height="70px"/>          
+        </q-toolbar-title>
+      </q-toolbar>
+
+      <q-tabs align="center">
+        <q-tab @click="goToPage('/personagem')" label="Personagens" />
+        <q-tab @click="goToPage('/quadrinho')" label="Quadrinhos" />
+        <q-tab @click="goToPage('/favoritos')" label="Favoritos" />
+      </q-tabs>
+    </q-header> 
+
+    <q-page-container align="center">
+        <div class="q-pa-md" style="max-width: 65%">  
       <q-form
         @submit="onSubmit"
         @reset="onReset"
@@ -65,7 +80,7 @@
             </div> 
         </div>
 
-        <div style="margin-top: 3%;">
+        <div style="margin-top: 3%;" align="right">
             <!-- Cadastrar | Atualizar -->
             <q-btn v-if="!isEditing" label="Cadastrar" type="submit" color="primary"/>
             <q-btn v-else label="Atualizar" @click="onUpdate(form.id)" color="primary"/>
@@ -77,7 +92,7 @@
       </q-form>      
     </div>
 
-    <div class="q-pa-md">
+    <div class="q-pa-md q-gutter-md q-h-full q-mt-md" style="max-width: 85%">
         <q-table
             title="Personagens"
             :rows="personagens"
@@ -118,7 +133,9 @@
             </template>
         </q-table>
     </div>
-  </template>
+    </q-page-container>  
+  </q-layout>    
+</template>
   
   <script setup>
     import {router, useForm} from '@inertiajs/vue3'
@@ -292,6 +309,10 @@
 
     function exitEditMode() {
         isEditing.value = false;
+    }
+    
+    function goToPage(route) {
+       const content = router.visit(route)
     }
 
 </script>
