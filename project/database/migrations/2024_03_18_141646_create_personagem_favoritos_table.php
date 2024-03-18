@@ -15,7 +15,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
                 $table->foreignId('personagem_id')->constrained()->onDelete('cascade');
-                $table->string('nome', 255); 
+                $table->string('alcunha', 255); 
                 $table->string('foto')->nullable(); 
                 $table->timestamps();
 

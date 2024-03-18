@@ -38,11 +38,11 @@
             :src="'/storage/' + personagem.foto" 
             alt="Foto do Personagem" 
             class="personagem-img" 
-            style="max-width: 240px; height: 270px; margin: 1%;"
+            style="max-width: 240px; height: 270px; margin: 1%; box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.5);"
             :fit="personagem"
             >
                 <div class="absolute-bottom text-subtitle1 text-center">
-                    {{ personagem.nome }}
+                    {{ personagem.alcunha }}
                     <q-icon
                     size="45px"
                     name="star"
@@ -65,7 +65,7 @@
             :src="'/storage/' + quadrinho.capa" 
             alt="Foto do Quadrinho" 
             class="quadrinho-img" 
-            style="max-width: 240px; height: 370px; margin: 1%;"
+            style="max-width: 240px; height: 370px; margin: 1%; box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.5)"
             :fit="quadrinho"
             >
                 <div class="absolute-bottom text-subtitle1 text-center">

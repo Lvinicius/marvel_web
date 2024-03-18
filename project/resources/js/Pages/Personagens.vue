@@ -364,7 +364,7 @@
         const data = {
             user_id: user.id,
             personagem_id: row.id,
-            nome: row.nome,
+            alcunha: row.alcunha,
             foto: row.foto
         };
 

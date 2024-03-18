@@ -12,7 +12,7 @@ class FavoritoController extends Controller
 {
     public function index()
     {
-        $personagens = PersonagemFavorito::orderBy('nome', 'asc')->get();
+        $personagens = PersonagemFavorito::orderBy('alcunha', 'asc')->get();
         $quadrinho  = QuadrinhoFavorito::orderBy('titulo', 'asc')->get();
         $user = Auth::user();
 
@@ -28,7 +28,7 @@ class FavoritoController extends Controller
         $validate=$request->validate([
             'user_id'=>'required',
             'personagem_id'=>'required',
-            'nome'=>'required',
+            'alcunha'=>'required',
             'foto'=>'required'
         ]); 
 
