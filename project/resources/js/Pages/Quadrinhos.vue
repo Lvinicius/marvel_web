@@ -163,9 +163,28 @@
                     <q-td style="width: 10%;" class="text-center">{{ props.row.ano }}</q-td>
                     <q-td style="width: 20%;" class="text-center">{{ props.row.autor }}</q-td>
                     <q-td style="width: 10%;" class="text-center">
-                        <q-icon size="25px" name="edit" @click="onEdit(props.row)" color="primary" class="cursor-pointer" />
-                        <q-icon size="25px" name="delete" @click="onDelete(props.row.id)" color="red" class="cursor-pointer" />
-                        <q-icon size="25px" name="star" @click="onFavorite(props.row.id)" color="yellow" class="cursor-pointer" />
+                        <q-icon size="25px" name="edit" @click="onEdit(props.row)" color="primary" class="cursor-pointer">
+                            <q-tooltip class="bg-primary" anchor="top middle" self="bottom middle" :offset="[10, 10]">Editar</q-tooltip>
+                        </q-icon>
+                        <q-icon size="25px" name="delete" @click="onDelete(props.row.id)" color="red" class="cursor-pointer">
+                            <q-tooltip class="bg-red" anchor="top middle" self="bottom middle" :offset="[10, 10]">Excluir</q-tooltip>
+                        </q-icon>
+                        <q-icon
+                                size="25px"
+                                name="star"
+                                :color="props.row.favorito ? 'yellow' : 'grey-4'"
+                                class="cursor-pointer"
+                                @click="props.row.favorito ? onUnfavorite(props.row.favorito_id) : onFavorite(props.row, user)"
+                            >
+                                <q-tooltip
+                                    class="bg-yellow-8"
+                                    anchor="top middle"
+                                    self="bottom middle"
+                                    :offset="[10, 10]"
+                                >
+                                    {{ props.row.favorito ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}
+                                </q-tooltip>
+                            </q-icon>
                     </q-td>
                 </q-tr>
                 </template>
@@ -335,6 +354,59 @@
     function onCancel() {
         onReset()
         exitEditMode()
+    }
+
+    function onUnfavorite(id){
+        router.post('/quadrinhofavorito/'+ id, {
+            preserveScroll: true,
+            onSuccess: () => {
+                $q.notify({
+                    color: 'green-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Personagem Desmarcado com Sucesso'
+                });
+                onReset();
+            },
+            onError: () => {
+                $q.notify({
+                    color: 'red-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Erro ao Desmarcar Personagem'
+                })
+            }
+        })
+    }
+
+    function onFavorite(row, user){
+        const data = {
+            user_id: user.id,
+            quadrinho_id: row.id,
+            titulo: row.titulo,
+            capa: row.capa
+        };
+
+        router.post('/quadrinhofavorito', data,{
+            preserveScroll: true,
+            onSuccess: () => {
+                $q.notify({
+                    color: 'green-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Quadrinho Marcado com Sucesso'
+                }); 
+                onReset();        
+            },
+            onError: () => {
+                $q.notify({
+                    color: 'red-4',
+                    textColor: 'white',
+                    icon: 'cloud_done',
+                    message: 'Erro ao Marcar Quadrinho'
+                })
+            }
+        })
     }
 
     function loadFile(url) {

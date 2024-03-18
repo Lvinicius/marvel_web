@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\PersonagemController;
 use App\Http\Controllers\QuadrinhoController;
+use App\Http\Controllers\FavoritoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,6 +23,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/personagem/{id}', [PersonagemController::class, 'update']);
     Route::resource('quadrinho', QuadrinhoController::class);
     Route::post('/quadrinho/{id}', [QuadrinhoController::class, 'update']);
+    Route::resource('/favoritos', FavoritoController::class);
+    Route::post('/personagemfavorito', [FavoritoController::class, 'storePersonagem']);
+    Route::post('/quadrinhofavorito', [FavoritoController::class, 'storeQuadrinho']);
+    Route::post('/personagemfavorito/{id}', [FavoritoController::class, 'destroyPersonagem']);
+    Route::post('/quadrinhofavorito/{id}', [FavoritoController::class, 'destroyQuadrinho']);
+    //Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
 
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');

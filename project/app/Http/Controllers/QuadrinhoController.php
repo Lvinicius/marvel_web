@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\QuadrinhoFavorito;
 use App\Models\Quadrinho;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +17,18 @@ class QuadrinhoController extends Controller
     {
         $quadrinhos = Quadrinho::where('ativo', 1)->orderBy('titulo', 'asc')->get();
         $user = Auth::user();
+
+        $favoritos = QuadrinhoFavorito::where('user_id', $user->id)->pluck('quadrinho_id')->toArray();
+
+        // Para cada quadrinho, verifiqcar se tem um favorito para o usuário atual
+        foreach ($quadrinhos as $quadrinho) {
+            $quadrinho->favorito = in_array($quadrinho->id, $favoritos);
+            if ($quadrinho->favorito) {
+                $quadrinho->favorito_id = quadrinhoFavorito::where('user_id', $user->id)
+                    ->where('quadrinho_id', $quadrinho->id)
+                    ->value('id');
+            }
+        }
 
         return Inertia::render('Quadrinhos', [
             'quadrinhos' => $quadrinhos,

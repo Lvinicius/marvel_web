@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Personagem;
+use App\Models\PersonagemFavorito;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,18 @@ class PersonagemController extends Controller
     {
         $personagens = Personagem::where('ativo', 1)->orderBy('nome', 'asc')->get();
         $user = Auth::user();
+        
+        $favoritos = PersonagemFavorito::where('user_id', $user->id)->pluck('personagem_id')->toArray();
+
+        // Para cada personagem, verifiqcar se tem um favorito para o usuário atual
+        foreach ($personagens as $personagem) {
+            $personagem->favorito = in_array($personagem->id, $favoritos);
+            if ($personagem->favorito) {
+                $personagem->favorito_id = PersonagemFavorito::where('user_id', $user->id)
+                    ->where('personagem_id', $personagem->id)
+                    ->value('id');
+            }
+        }
 
         return Inertia::render('Personagens', [
             'personagens' => $personagens,
