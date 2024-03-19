@@ -15,20 +15,32 @@ Com uma interface intuitiva e funcionalidades poderosas, o Marvel Web oferece um
 
 ## Instalação
 1. Clone o repositório do projeto do GitHub:
+
 git clone https://github.com/Lvinicius/marvel_web.git
 
 2. Navegue até a pasta do projeto:
+
 cd marvel_web/project
 
 3. Instale as dependências do PHP usando o Composer:
+
 composer install
 
 4. Instale as dependências do Node.js:
+
 npm install
 
+5. Prepare o Artisan: 
+
+php artisan migrate
+
+php artisan 
+
+php artisan storage:link
 
 ## Uso
 1. Inicie o servidor PHP:
+
 php artisan serve
 
 2. Abra um navegador da web e vá para http://localhost:8000/login
